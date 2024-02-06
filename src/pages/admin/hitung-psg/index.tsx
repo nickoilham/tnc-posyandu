@@ -45,6 +45,8 @@ const PsgPage = () => {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [isDownloading, setIsDownloading] = useState(false);
 
+	const [isSaved, setIsSaved] = useState(false);
+
 	const chartData = useSignal({
 		age: 0,
 		weight: 0,
@@ -215,6 +217,7 @@ const PsgPage = () => {
 				saveDataPayload
 			);
 			const result = req.data;
+			setIsSaved(true);
 			toast.info(result.message);
 		} catch (error) {
 			console.log(error);
@@ -341,7 +344,9 @@ const PsgPage = () => {
 										className="bg-primary-1 duration-500">
 										Download hasil perhitungan.
 									</Button>
-									<Button onClick={onSaveData}>Simpan Data</Button>
+									<Button disabled={isSaved} onClick={onSaveData}>
+										Simpan Data
+									</Button>
 								</div>
 
 								<Tabs.Group

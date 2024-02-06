@@ -10,6 +10,8 @@ import {
 	Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useQuery } from "react-query";
+import axios from "axios";
 
 ChartJS.register(
 	CategoryScale,
@@ -28,9 +30,11 @@ export const options = {
 		},
 		title: {
 			display: true,
-			text: "Jumlah Status Pemeriksaan Balita",
+			text: "Jumlah Status Gizi Balita",
 		},
 	},
+	maintainAspectRatio: true,
+	aspectRatio: 2,
 };
 
 const labels = [
@@ -42,39 +46,44 @@ const labels = [
 	"Obesitas",
 ];
 
-export const data = {
-	labels,
-	datasets: [
-		{
-			label: "Jumlah Status Gizi",
-			data: [2, 1, 2, 3, 4, 5],
-			backgroundColor: [
-				"rgba(255, 99, 132, 0.2)",
-				"rgba(255, 206, 86, 0.2)",
-				"rgba(75, 192, 192, 0.2)",
-				"rgba(153, 102, 255, 0.2)",
-				"rgba(54, 162, 235, 0.2)",
-				"rgba(255, 159, 64, 0.2)",
-			],
-			borderColor: [
-				"rgba(255, 99, 132, 1)",
-				"rgba(255, 206, 86, 1)",
-				"rgba(75, 192, 192, 1)",
-				"rgba(153, 102, 255, 1)",
-				"rgba(54, 162, 235, 1)",
-				"rgba(255, 159, 64, 1)",
-			],
-			borderWidth: 1,
-		},
-	],
-};
-
 interface AdminPageProps {}
 
 const AdminPage: FC<AdminPageProps> = ({}) => {
+	const { data: chartData } = useQuery(["get_chart_data"], async () => {
+		const request = await axios.get("http://localhost:3001/chartData");
+		return request.data;
+	});
+
+	const data = {
+		labels,
+		datasets: [
+			{
+				label: "Jumlah Status Gizi",
+				data: chartData,
+				backgroundColor: [
+					"rgba(255, 99, 132, 0.2)",
+					"rgba(255, 206, 86, 0.2)",
+					"rgba(75, 192, 192, 0.2)",
+					"rgba(153, 102, 255, 0.2)",
+					"rgba(54, 162, 235, 0.2)",
+					"rgba(255, 159, 64, 0.2)",
+				],
+				borderColor: [
+					"rgba(255, 99, 132, 1)",
+					"rgba(255, 206, 86, 1)",
+					"rgba(75, 192, 192, 1)",
+					"rgba(153, 102, 255, 1)",
+					"rgba(54, 162, 235, 1)",
+					"rgba(255, 159, 64, 1)",
+				],
+				borderWidth: 1,
+			},
+		],
+	};
+
 	return (
 		<AdminLayout>
-			<main className="w-full flex-grow p-6">
+			<main className="w-full flex-grow p-6 min-h-screen">
 				<h1 className="text-3xl text-black pb-6">Dashboard</h1>
 
 				<div className="flex flex-wrap mt-6">
@@ -82,8 +91,8 @@ const AdminPage: FC<AdminPageProps> = ({}) => {
 						<p className="text-xl pb-3 flex items-center">
 							Jumlah Status Pemeriksaan Balita
 						</p>
-						<div className="p-6 bg-white">
-							<Bar options={options} width={100} height={50} data={data} />
+						<div className="p-6 bg-white h-[500px]">
+							<Bar options={options} data={data} />
 						</div>
 					</div>
 				</div>
