@@ -232,11 +232,6 @@ const PsgPage = () => {
 					<h1 className="font-bold text-2xl lg:text-3xl">
 						Kalkulator Perhitungan Gizi
 					</h1>
-					<h2 className="text-paragraph">
-						Yuk moms ukur Gizi dan kebutuhan nutrisi balitamu sekarang{" "}
-						<br className="hidden md:block" /> menggunakan Perhitungan gizi
-						berstandar kemenkes.
-					</h2>
 				</div>
 
 				<form
@@ -349,7 +344,7 @@ const PsgPage = () => {
 									</Button>
 								</div>
 
-								<Tabs.Group
+								<Tabs
 									style="underline"
 									className="border border-gray-200 rounded-md">
 									<Tabs.Item title="Rangkuman" tabIndex={0}>
@@ -556,7 +551,7 @@ const PsgPage = () => {
 											</p>
 										</div>
 									</Tabs.Item>
-								</Tabs.Group>
+								</Tabs>
 							</div>
 						)}
 					</div>

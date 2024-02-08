@@ -87,11 +87,17 @@ const CustomNavbar = () => {
 							{route.text}
 						</Link>
 					))}
-					{isLogged && (
+					{isLogged ? (
 						<Link
 							href="/admin/dashboard"
 							className="block p-4 duration-500 hover:text-primary-2">
 							Dashboard
+						</Link>
+					) : (
+						<Link
+							href="/auth/signin"
+							className="block p-4 duration-500 hover:text-primary-2">
+							Login Admin
 						</Link>
 					)}
 				</div>

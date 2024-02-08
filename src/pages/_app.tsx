@@ -1,13 +1,8 @@
 import type { AppProps } from "next/app";
-import { poppins, suisseNeue } from "@/helpers/registerFont";
-import CustomNavbar from "@/components/CustomNavbar";
-import CustomFooter from "@/components/CustomFooter";
-import MetaHead from "@/components/MetaHead";
+import "rc-pagination/assets/index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
-import { ReactElement, ReactNode, useState } from "react";
-import { NextPage } from "next";
 import { QueryClientProvider } from "react-query";
 import { queryClient } from "@/helpers/reactQuery";
 import nProgress from "nprogress";

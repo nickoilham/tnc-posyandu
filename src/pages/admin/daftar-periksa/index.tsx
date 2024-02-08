@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import {
 	QueryClient,
@@ -9,6 +9,10 @@ import {
 import moment from "moment";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import axios from "axios";
+import Pagination from "rc-pagination/lib/Pagination";
+import { Datepicker } from "flowbite-react";
+import { formatDateToMonthYear } from "@/helpers/utlis";
 
 type DataPeriksaType = {
 	id: any;
@@ -25,17 +29,44 @@ type DataPeriksaType = {
 interface DaftarPasienPageProps {}
 
 const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
-	moment.locale("id");
+	const [selectedDate, setSelectedDate] = useState<string>();
+	const [dateToDisplay, setDateToDisplay] = useState<string>();
+	const [pageSize, setPageSize] = useState(10);
+	const [currentPage, setCurrentPage] = useState(1);
 	const queryClient = useQueryClient();
-	const { data, isLoading } = useQuery({
-		queryKey: ["get_all_data_periksa"],
-		queryFn: async () => {
-			const request = await fetch("http://localhost:3001/hasil_pemeriksaan");
-			const data = await request.json();
 
-			return data;
+	const month = selectedDate?.split("/")[1];
+	const year = selectedDate?.split("/")[2];
+
+	const { data, isLoading } = useQuery({
+		queryKey: ["get_all_data_periksa", { currentPage, month, year }],
+		queryFn: async () => {
+			const request = await axios.get(
+				"http://localhost:3001/hasil_pemeriksaan",
+				{
+					params: {
+						limit: pageSize,
+						page: currentPage,
+						month,
+						year,
+					},
+				}
+			);
+			return request.data;
 		},
 	});
+
+	const onPageChange = (page: number) => {
+		setCurrentPage(page);
+	};
+
+	const onDateChange = (event: Date) => {
+		var date = new Date(event);
+		var formattedDate = date.toLocaleDateString("en-GB");
+
+		setSelectedDate(formattedDate);
+		setDateToDisplay(formatDateToMonthYear(String(formattedDate)));
+	};
 
 	const deleteDataPeriksa = useMutation({
 		mutationKey: ["delete_data_periksa"],
@@ -55,11 +86,17 @@ const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
 		},
 	});
 
+	useEffect(() => {
+		setDateToDisplay(
+			formatDateToMonthYear(new Date().toLocaleDateString("en-GB"))
+		);
+	}, []);
+
 	const badgeMatchColor: any = {
 		"gizi buruk": "#ff6384",
 		"gizi kurang": "#ffce56",
 		"gizi baik": "#4bc0c0",
-		"berresiko gizi lebih": "#9966ff",
+		"beresiko gizi lebih": "#9966ff",
 		"gizi lebih": "#36a2eb",
 		obesitas: "#ff9f40",
 	};
@@ -69,7 +106,20 @@ const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
 			<main className="w-full flex-grow p-6">
 				<h1 className="text-3xl text-black pb-6">Daftar Periksa</h1>
 				<div className="w-full mt-5">
-					<div className="bg-white overflow-auto">
+					<div className="w-fit">
+						<div className="flex flex-col">
+							<label htmlFor="datePicker">Filter Bulan dan Tahun</label>
+							<Datepicker
+								id="datePicker"
+								className="my-3 z-50"
+								onSelectedDateChanged={onDateChange}
+								weekStart={1}
+								value={dateToDisplay}
+								title="Filter Bulan dan Tahun"
+							/>
+						</div>
+					</div>
+					<div className="bg-white">
 						<table className="min-w-full leading-normal">
 							<thead>
 								<tr>
@@ -104,7 +154,7 @@ const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
 							</thead>
 							<tbody>
 								{!isLoading &&
-									data.map((item: DataPeriksaType, index: number) => (
+									data?.result?.map((item: DataPeriksaType, index: number) => (
 										<tr key={index}>
 											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
 												<div className="flex items-center">
@@ -140,7 +190,7 @@ const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
 												</p>
 											</td>
 											<td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-												<p className="text-gray-900 whitespace-no-wrap">
+												<p className="text-gray-900 whitespace-no-wrap capitalize">
 													{item.jenis_kelamin}
 												</p>
 											</td>
@@ -168,12 +218,12 @@ const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
 												<div className="flex gap-10">
 													<Link
 														href={`/admin/pemeriksaan/${item.id}`}
-														className="relative inline-block px-3 py-1 font-semibold text-white-900 leading-tight bg-blue-200">
+														className="relative inline-block px-5 py-3 font-semibold text-white-900 leading-tight bg-blue-200 rounded-md">
 														Lihat Data
 													</Link>
 
 													<button
-														className="relative inline-block px-3 py-1 font-semibold text-white-900 leading-tight bg-red-200"
+														className="relative inline-block px-5 py-3 font-semibold text-white-900 leading-tight bg-red-200 rounded-md"
 														onClick={() => deleteDataPeriksa.mutate(item.id)}>
 														Hapus
 													</button>
@@ -183,6 +233,14 @@ const DaftarPasienPage: FC<DaftarPasienPageProps> = ({}) => {
 									))}
 							</tbody>
 						</table>
+						<div className="flex justify-end mt-3">
+							<Pagination
+								defaultPageSize={pageSize}
+								total={data?.totalData}
+								current={currentPage}
+								onChange={onPageChange}
+							/>
+						</div>
 					</div>
 				</div>
 			</main>

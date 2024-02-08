@@ -12,6 +12,7 @@ import {
 import { Bar } from "react-chartjs-2";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { FaBaby } from "react-icons/fa";
 
 ChartJS.register(
 	CategoryScale,
@@ -54,6 +55,16 @@ const AdminPage: FC<AdminPageProps> = ({}) => {
 		return request.data;
 	});
 
+	const { data: pasien, isLoading } = useQuery({
+		queryKey: ["get_all_data_periksa"],
+		queryFn: async () => {
+			const request = await axios.get(
+				"http://localhost:3001/hasil_pemeriksaan"
+			);
+			return request.data;
+		},
+	});
+
 	const data = {
 		labels,
 		datasets: [
@@ -85,6 +96,16 @@ const AdminPage: FC<AdminPageProps> = ({}) => {
 		<AdminLayout>
 			<main className="w-full flex-grow p-6 min-h-screen">
 				<h1 className="text-3xl text-black pb-6">Dashboard</h1>
+
+				<div className="grid grid-cols-4">
+					<div className="w-full shadow-lg rounded-2xl h-fit  p-5">
+						<h1 className="font-semibold text-xl">Total Pasien</h1>
+						<div className="flex items-center justify-between">
+							<h1 className="text-6xl">{pasien?.totalData}</h1>
+							<FaBaby className="w-20 h-20" />
+						</div>
+					</div>
+				</div>
 
 				<div className="flex flex-wrap mt-6">
 					<div className="w-full pr-0 lg:pr-2">

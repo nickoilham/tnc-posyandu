@@ -162,7 +162,7 @@ const ViewPemeriksaan: FC<ViewPemeriksaanProps> = ({ data }) => {
 
 	return (
 		<AdminLayout>
-			<div className="container mx-auto py-7 px-6 md:px-14 lg:px-24 xl:px-28">
+			<div className="container mx-auto py-7 px-6 md:px-14 lg:px-24 xl:px-28 ">
 				<form
 					className="grid gap-x-5 gap-y-5 pb-9 grid-cols-1 md:grid-cols-2 md:gap-y-6"
 					onSubmit={() => {}}>
@@ -241,10 +241,13 @@ const ViewPemeriksaan: FC<ViewPemeriksaanProps> = ({ data }) => {
 							Download hasil perhitungan.
 						</Button>
 
-						<Tabs.Group
+						<Tabs
 							style="underline"
 							className="border border-gray-200 rounded-md">
-							<Tabs.Item title="Rangkuman" tabIndex={0}>
+							<Tabs.Item
+								title="Rangkuman"
+								className="focus:ring-opacity-0 focus:ring-transparent focus:ring-0"
+								tabIndex={0}>
 								<div className="space-y-8 px-5 pb-6 mx-auto xl:w-10/12">
 									<div className="border-1 p-4 grid mx-auto gap-x-3 gap-y-2 lg:grid-cols-3">
 										<h2>
@@ -443,7 +446,7 @@ const ViewPemeriksaan: FC<ViewPemeriksaanProps> = ({ data }) => {
 									</p>
 								</div>
 							</Tabs.Item>
-						</Tabs.Group>
+						</Tabs>
 					</div>
 				)}
 			</div>

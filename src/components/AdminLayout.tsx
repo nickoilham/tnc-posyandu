@@ -76,7 +76,7 @@ const AdminLayout: FC<AdminLayoutProps> = ({ children }) => {
 						</h1>
 					</div>
 
-					<div className="w-full overflow-x-hidden border-t flex flex-col">
+					<div className="w-full border-t flex flex-col overflow-y-scroll min-h-screen">
 						{children}
 						<footer className="w-full bg-white text-right p-4"></footer>
 					</div>
